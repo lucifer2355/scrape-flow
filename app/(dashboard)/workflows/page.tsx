@@ -1,6 +1,8 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { waitFor } from "@/lib/helper/waitFor";
 import React, { Suspense } from "react";
+import { GetWorkflowsForUsers } from "@/actions/workflows/getWorkflowsForUsers";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AlertCircle, InboxIcon } from "lucide-react";
 
 function page() {
   return (
@@ -32,6 +34,36 @@ function UserWorkflowSkeleton() {
 }
 
 async function UserWorkflow() {
+  const workflows = await GetWorkflowsForUsers();
+  if (!workflows) {
+    return (
+      <Alert variant='destructive'>
+        <AlertCircle className='w-4 h-4' />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          There are no workflows available for you. Create a new workflow to get
+          started.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (workflows.length === 0) {
+    return (
+      <div className='flex flex-col gap-4 h-full items-center justify-center'>
+        <div className='rounded-full bg-accent w-20 h-20 flex items-center justify-center'>
+          <InboxIcon size={40} className='stroke-primary' />
+        </div>
+        <div className='flex flex-col gap-1 text-center'>
+          <p className='font-bold'>No workflows created yet</p>
+          <p className='text-sm text-muted-foreground'>
+            Click the button below to create your first workflow
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return <div></div>;
 }
 
